@@ -1,0 +1,50 @@
+version: "3.2"
+
+services:
+  traefik:
+    image: traefik
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+    networks:
+      - bridge
+      - traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - traefik:/data
+    command:
+      - --accesslogsfile=/data/access.log
+      - --web
+      - --web.metrics.prometheus
+      - --docker
+      - --docker.watch
+      - --docker.swarmmode
+      - --docker.domain={{domain}}
+      - --docker.exposedbydefault=false
+      - --entrypoints=Name:http Address::80 Redirect.EntryPoint:https
+      - --entryPoints=Name:https Address::443 TLS
+      - --defaultentrypoints=http,https
+      - --acme
+      - --acme.entryPoint=https
+      - --acme.email=admin@shortcircuit.net.au
+      - --acme.ondemand=false
+      - --acme.acmelogging=true
+      - --acme.onhostrule=true
+      - --acme.storage=/data/acme.json
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.role == manager"
+      replicas: 1
+
+networks:
+  bridge:
+    external: true
+  traefik:
+    driver: overlay
+
+volumes:
+  traefik:
+    driver: local

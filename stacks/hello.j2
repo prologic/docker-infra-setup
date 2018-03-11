@@ -1,0 +1,25 @@
+version: "3.2"
+
+services:
+  hello-go:
+    image: prologic/hello-go
+    networks:
+      - lb_traefik
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.port=8000"
+        - "traefik.backend=hello"
+        - "docker.network=traefik"
+        - "traefik.frontend.rule=Host:hello.{{domain}}"
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+      replicas: 3
+
+networks:
+  lb_traefik:
+    external: true
