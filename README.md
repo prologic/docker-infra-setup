@@ -14,3 +14,8 @@ Just some quick shell scripts that perform the following:
 * p2cli
 * Docker Machine
 * a Digital Ocean account and API key
+
+**Note:** This is *live* actual running inrastructure and a demo app can be
+vied [here](https://hello.test.shortcircuit.net.au/).
+
+Enjoy ;)
